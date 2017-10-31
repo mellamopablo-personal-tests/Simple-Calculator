@@ -36,6 +36,10 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     // Data
     private double mAccumulator;
     private char mOp;
+    // Es true solo cuando el último botón pulsado ha sido un botón de operación
+    // Justo cuando se pulse otro botón, esto se define como false (a menos, claro,
+    // que ese úlitmo botón sea otro botón de operación)
+    private boolean justPressedOperationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private void initializeValues() {
         mAccumulator = 0;
         mOp = 0;
+        justPressedOperationButton = false;
         resultTextView.setText("0");
     }
 
@@ -115,6 +120,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onClick(View v) {
+        boolean definingSecondNumber = justPressedOperationButton;
+        justPressedOperationButton = false;
+
         Button button = (Button) v;
         switch (v.getId()) {
             case R.id.btn_zero:
@@ -127,7 +135,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_seven:
             case R.id.btn_eight:
             case R.id.btn_nine:
-                readNumber(button);
+                readNumber(button, definingSecondNumber);
                 break;
             case R.id.btn_add:
             case R.id.btn_subtract:
@@ -190,6 +198,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private void applyOp(Button button) {
         mOp = button.getText().toString().charAt(0);
         mAccumulator = Double.parseDouble(resultTextView.getText().toString());
+        justPressedOperationButton = true;
     }
 
     private void deleteNumber() {
@@ -232,8 +241,11 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
-    private void readNumber(Button button) {
+    /**
+     * @param button El botón pulsado
+     * @param definingSecondNumber True si se está definiendo el segundo número de una operación
+     */
+    private void readNumber(Button button, boolean definingSecondNumber) {
         String digit = button.getText().toString();
         String actualNumber = resultTextView.getText().toString();
         boolean intNumber = actualNumber.indexOf('.') == -1;
@@ -241,7 +253,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         Log.d("CalcActivity", "mAccumulator = " + mAccumulator + " | mOp = " + mOp);
 
         if (intNumber) {
-            if (actualNumber.equals("0")) {
+            if (actualNumber.equals("0") || definingSecondNumber) {
                 resultTextView.setText(digit);
             } else {
                 resultTextView.setText(
