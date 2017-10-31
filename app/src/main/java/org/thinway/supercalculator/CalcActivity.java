@@ -248,24 +248,21 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private void readNumber(Button button, boolean definingSecondNumber) {
         String digit = button.getText().toString();
         String actualNumber = resultTextView.getText().toString();
-        boolean intNumber = actualNumber.indexOf('.') == -1;
 
         Log.d("CalcActivity", "mAccumulator = " + mAccumulator + " | mOp = " + mOp);
 
-        if (intNumber) {
-            if (actualNumber.equals("0") || definingSecondNumber) {
-                resultTextView.setText(digit);
-            } else {
-                resultTextView.setText(
-                        resultTextView.getText().toString() + digit
-                );
-            }
+        if (actualNumber.equals("0") || definingSecondNumber) {
+            resultTextView.setText(digit);
+        } else {
+            resultTextView.setText(
+                    resultTextView.getText().toString() + digit
+            );
+        }
 
-            if (resultTextView.getText().toString().equals("0") && mOp == '/') {
-                equalBtn.setEnabled(false);
-            } else {
-                equalBtn.setEnabled(true);
-            }
+        if (digit.equals("0") && mOp == '/') {
+            equalBtn.setEnabled(false);
+        } else {
+            equalBtn.setEnabled(true);
         }
 
 
