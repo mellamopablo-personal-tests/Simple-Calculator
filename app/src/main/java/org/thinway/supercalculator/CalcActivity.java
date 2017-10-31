@@ -1,5 +1,6 @@
 package org.thinway.supercalculator;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+@SuppressLint("SetTextI18n")
 public class CalcActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Widgets
@@ -188,8 +190,6 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private void applyOp(Button button) {
         mOp = button.getText().toString().charAt(0);
         mAccumulator = Double.parseDouble(resultTextView.getText().toString());
-
-        resultTextView.setText("0");
     }
 
     private void deleteNumber() {
@@ -236,10 +236,9 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     private void readNumber(Button button) {
         String digit = button.getText().toString();
         String actualNumber = resultTextView.getText().toString();
-        boolean intNumber = (actualNumber.indexOf('.') == -1) ? true : false;
+        boolean intNumber = actualNumber.indexOf('.') == -1;
 
         Log.d("CalcActivity", "mAccumulator = " + mAccumulator + " | mOp = " + mOp);
-
 
         if (intNumber) {
             if (actualNumber.equals("0")) {
