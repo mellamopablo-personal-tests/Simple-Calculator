@@ -40,6 +40,14 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
     // Justo cuando se pulse otro botón, esto se define como false (a menos, claro,
     // que ese úlitmo botón sea otro botón de operación)
     private boolean justPressedOperationButton;
+    // Contiene el operador de la última operación, para saber qué operación aplicar
+    // si el usuario presiona igual de nuevo
+    private char lastOperationOperator;
+    // El segundo operando de la última operación
+    private double lastOperationSecondNumber;
+    // Si se debería repetir la última operación. Cuando se pulsa igual, esto es true. Después
+    // cambia a false.
+    private boolean shouldRepeatLastOperation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,7 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
         mAccumulator = 0;
         mOp = 0;
         justPressedOperationButton = false;
+        shouldRepeatLastOperation = false;
         resultTextView.setText("0");
     }
 
@@ -161,37 +170,75 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 // Error
         }
+
+        shouldRepeatLastOperation = v.getId() == R.id.btn_equal;
     }
 
     /**
      * Apply the selected operation
      */
     private void makeOperation() {
-        double secondNumber = Double.parseDouble(resultTextView.getText().toString());
-        double total = 0;
+        if (shouldRepeatLastOperation) {
 
-        switch (mOp) {
-            case '+':
-                total = mAccumulator + secondNumber;
-                break;
-            case '-':
-                total = mAccumulator - secondNumber;
-                break;
-            case '*':
-                total = mAccumulator * secondNumber;
-                break;
-            case '/':
-                total = mAccumulator / secondNumber;
-                break;
-            default:
-        }
+            double currentNumber = Double.parseDouble(resultTextView.getText().toString());
+            double result = 0;
 
-        long totalInt = (long) total;
+            switch (lastOperationOperator) {
+                case '+':
+                    result = currentNumber + lastOperationSecondNumber;
+                    break;
+                case '-':
+                    result = currentNumber - lastOperationSecondNumber;
+                    break;
+                case '*':
+                    result = currentNumber * lastOperationSecondNumber;
+                    break;
+                case '/':
+                    result = currentNumber / lastOperationSecondNumber;
+                    break;
+                default:
+            }
 
-        if (total == (double) totalInt) {
-            resultTextView.setText(totalInt + "");
+            long totalInt = (long) result;
+
+            if (result == (double) totalInt) {
+                resultTextView.setText(totalInt + "");
+            } else {
+                resultTextView.setText(result + "");
+            }
+
         } else {
-            resultTextView.setText(total + "");
+
+            double secondNumber = Double.parseDouble(resultTextView.getText().toString());
+            double total = 0;
+
+            switch (mOp) {
+                case '+':
+                    total = mAccumulator + secondNumber;
+                    break;
+                case '-':
+                    total = mAccumulator - secondNumber;
+                    break;
+                case '*':
+                    total = mAccumulator * secondNumber;
+                    break;
+                case '/':
+                    total = mAccumulator / secondNumber;
+                    break;
+                default:
+            }
+
+            long totalInt = (long) total;
+
+            if (total == (double) totalInt) {
+                resultTextView.setText(totalInt + "");
+            } else {
+                resultTextView.setText(total + "");
+            }
+
+            lastOperationOperator = mOp;
+            lastOperationSecondNumber = secondNumber;
+
         }
     }
 
