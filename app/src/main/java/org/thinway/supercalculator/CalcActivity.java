@@ -203,20 +203,20 @@ public class CalcActivity extends AppCompatActivity implements View.OnClickListe
 
     private void deleteNumber() {
         String actualNumber = resultTextView.getText().toString();
+        int parsedNumber;
 
-        if (actualNumber.length() == 1 || actualNumber.length() == 2 && Integer.parseInt(actualNumber) < 0) {
+        try {
+            parsedNumber = Integer.parseInt(actualNumber);
+        } catch (NumberFormatException e) {
+            parsedNumber = 0;
+        }
+
+        if (actualNumber.length() == 1 || actualNumber.length() == 2 && parsedNumber < 0) {
             resultTextView.setText("0");
         } else {
-            if (actualNumber.charAt(actualNumber.length() - 2) != '.') {
-                resultTextView.setText(
-                        actualNumber.substring(0, actualNumber.length() - 1)
-                );
-            } else {
-                resultTextView.setText(
-                        actualNumber.substring(0, actualNumber.length() - 2)
-                );
-            }
-
+            resultTextView.setText(
+                    actualNumber.substring(0, actualNumber.length() - 1)
+            );
         }
     }
 
